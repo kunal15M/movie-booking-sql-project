@@ -31,3 +31,39 @@ FROM Users u
 JOIN Bookings b ON u.user_id = b.user_id
 GROUP BY u.name
 ORDER BY total_bookings DESC;
+
+-- ADVANCED SQL QUERIES
+
+-- 1. Movies with more than 3 seats booked
+SELECT m.title, SUM(b.seats) AS total_seats 
+FROM Bookings b
+JOIN Shows s ON b.show_id = s.show_id
+JOIN Movies m ON s.movie_id = m.movie_id
+GROUP BY m.title 
+HAVING SUM(b.seats) > 3;
+
+
+-- 2. User who booked the maximum number of seats
+SELECT u.name, SUM(b.seats) AS total_seats
+FROM Users u
+JOIN Bookings b ON u.user_id = b.user_id
+GROUP BY u.name
+ORDER BY total_seats DESC
+LIMIT 1;
+
+
+-- 3. Movies longer than average duration
+SELECT title, duration
+FROM Movies
+WHERE duration > (
+    SELECT AVG(duration)
+    FROM Movies
+);
+
+
+-- 4. Total revenue generated per movie (₹200 per seat)
+SELECT m.title, SUM(b.seats * 200) AS revenue 
+FROM Bookings b
+JOIN Shows s ON b.show_id = s.show_id
+JOIN Movies m ON s.movie_id = m.movie_id
+GROUP BY m.title;
